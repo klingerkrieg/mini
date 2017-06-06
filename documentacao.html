@@ -1,0 +1,223 @@
+<html>
+<head>
+    <meta charset="utf8"/>
+    <title>Documentação do framework</title>
+    <style>
+    red{
+        color:red;
+    }
+    pre{
+        color:#312c51;
+    }
+    </style>
+</head>
+<body>
+
+<h3>Índice</h3>
+<a href="#instalacao">Instalação</a><br/>
+<a href="#mvc">MVC</a><br/>
+<a href="#crud">Criando um CRUD</a><br/>
+<a href="#obs">Observações</a><br/>
+
+<a id="instalacao"></a>
+<h3>Instalação</h3>
+
+
+<h4>1. Diretório do apache</h4>
+
+<p>Extraia toda a pasta do projeto para o diretório do apache:</p>
+
+<h5>Linux</h5>
+<p>No Linux normalmente é /var/www ou /var/www/html</p>
+
+<h5>Windows</h5>
+<p>No Windows tem que ser o diretório <b>htdocs</b>, tanto no xampp, wampp ou apache (depende de qual você estiver usando): <b>Ex: c:/xampp/htdocs</b></p>
+
+
+<h4>2. .htaccess</h4> 
+<p>Para utilizar tanto o CodeIgniter como esse framework básico é necessário realizar algumas configurações do mod_rewrite:</p>
+
+<p>Na pasta principal do framework existe o arquivo <red>.htaccess</red> com o seguinte conteúdo:</p>
+
+<pre>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /<red>fw</red>/index.php/$1 [L]
+</pre>
+
+<p>Altere o trecho 'fw' para o nome real da pasta onde está seu projeto.</p>
+
+<h4>3. mod_rewrite</h4>
+
+<h5>Linux</h5>
+
+<p>Altere esse arquivo para permitir o mod_rewrite no diretório do seu projeto:</p>
+<pre>
+sudo nano /etc/apache2/sites-available/<red>000-default.conf</red>
+</pre>
+
+<p>Dentro desse arquivo adicione, de acordo com o nome da pasta do seu projeto:</p>
+
+<pre>
+&lt;VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+
+        <red>&lt;Directory "/var/www/html/<b>fw</b>">
+             AllowOverride All
+        &lt;/Directory></red>
+
+</pre>
+
+<p>Execute os seguintes comandos:</p>
+<pre>
+sudo a2enmod rewrite
+sudo service apache2 restart
+</pre>
+
+<h5>Windows</h5>
+<p>No WINDOWS Encontre o arquivo <b>http.conf</b> que deve estar dentro de apache2 </p>
+
+<p>Encontre a linha abaixo e remova o "#":</p>
+<pre>
+<red>#</red>LoadModule rewrite_module modules/mod_rewrite.so
+</pre>
+
+<p>Encontre o trecho que possui as tags de diretório e modifique para:</p>
+<pre>
+<b>#troque esse</b>
+&lt;directory />
+    Options FollowSymLinks
+    AllowOverride None
+    Order deny,allow
+    Deny from all
+&lt;/directory>
+
+<b>#por esse</b>
+&lt;directory />
+    Options All
+    AllowOverride All
+&lt;/directory>
+</pre>
+
+<p>Ainda nesse arquivo encontre todos os locais que possui <red>AllowOverride None</red> e troque para: <red>AllowOverride All</red></p>
+
+<p>Reinicie o xampp</p>
+
+<a id="mvc"></a>
+<h3>MVC</h3>
+
+<h4>O que é o padrão?</h4>
+
+<img src="./doc/mvc.png">
+
+<h4>Funcionamento das URLs</h4>
+
+<img src="./doc/mvc-url.png">
+
+
+<a id="crud"></a>
+<h3>Criando um CRUD</h3>
+
+<p>Crie um schema no banco de dados</p>
+<pre>
+CREATE SCHEMA `crudteste` ;
+</pre>
+
+<p>Configure o arquivo <b>sys/config.php</b></p>
+
+<pre>
+#primeiro controller a ser chamado por padrao
+$index = "Principal";
+
+$host = "localhost";
+$dbname = "crudteste";
+$user = "root";
+$pass = "root";
+
+#nao realizar mais modificacoes no banco
+$freezeDb = false;
+</pre>
+
+<p>Acesse via navegador: http://localhost/<red>fw</red></p>
+
+<p>Você irá para a página inicial, mas poderá acessar o exemplo do CRUD</p>
+
+<p>Salve alguma informação e veja que as tabelas foram criadas automaticamente no banco de dados.</p>
+
+<p>Abra o código dos arquivos e leia os comentários para entender o fucnionamento, inicie com:</p>
+
+<ol>
+    <li>controllers/Livros.php</li>
+    <li>models/LivrosModel.php</li>
+    <li>views/cad_livro.php</li>
+    <li>views/listar.php</li>
+    <li>views/layout/top.php</li>
+</ol>
+
+<a id="obs"></a>
+<h3>Observações</h3>
+
+<h4>$server_url</h4>
+
+<p>Você poderá usar a função <red>serverUrl()</red> que contém o endereço da url até o diretório principal: <b>http://localhost/fw</b></p>
+<pre>
+#Dentro de views ela sempre irá existir
+print serverUrl();
+</pre>
+
+
+<h4>Rb - RedBean</h4>
+
+<p>O RedBean já está instalado nesse framework, para acessar a documentação oficial:</p>
+
+<a href="http://redbeanphp.com/">http://redbeanphp.com/</a>
+
+<h4>Rb - RedBean</h4>
+
+<p>Para esse framework foi criado um mod para o RedBean</p>
+
+<pre>
+#Original
+R::dispense("tabela");
+R::store($obj);
+$obj = R::load($tblName,$id);
+R::trash($obj);
+
+#Mod
+Rb::tbl("tabela");
+Rb::save($obj);
+Rb::delete($tblName,$id);
+
+#Porem qualquer comando antigo ainda pode ser utilizado:
+Rb::dispense("tabela")
+Rb::findAll("tabela");
+
+</pre>
+
+<h4>Array para Variável</h4>
+
+<p>Dentro do controller você irá criar um array que será passado para a view</p>
+
+<pre>
+#controller
+$data['dados'] = array("nome"=>"João");
+view("listar",$data);
+
+
+#view
+#Na view cada casa do array é convertida em variável:
+print $dados["nome"];
+</pre>
+
+</body>
+</html>
