@@ -5,7 +5,7 @@ $index = "Principal";
 $host = "localhost";
 $dbname = "crudteste";
 $user = "root";
-$pass = "root";
+$pass = "";
 
 #nao realizar mais modificacoes no banco
 $freezeDb = false;

@@ -33,7 +33,7 @@ Categoria
     <input name="categoriaNome"    value="<?php print _v($dados,'categoriaNome'); ?>"><br/>
 
 Data de lançamento
-    <input name="dataLancamento" value="<?php print _v($dados,'dataLancamento'); ?>"><br/>
+    <input name="dataLancamento" class='date' value="<?php print _v($dados,'dataLancamento'); ?>"><br/>
 
 <!-- Esses botoes nao possuem nenhuma validacao nesse exemplo, mas no seu sistema real devera existir tal validacao -->
 <button type="submit">Salvar</button><button type="button" onclick="excluir()">Excluir</button>

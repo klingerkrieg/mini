@@ -17,12 +17,20 @@ class LivrosModel {
 	function getAll(){
 		#Usando o mod do RedBeans
 		$lista = Rb::findAll($this->tabela);
-		foreach ($lista as $el){
+		//for ($i = 0; $i < sizeof($lista); $i++){
+
+		foreach($lista as $el) {
+		
+			#desconverto a data do formato americano para o brasileiro
+			$el->dataLancamento = dateToBr($el->dataLancamento);
+			
 			//Para cada registro eu aplico o fetchAs
 			//Esse modo será mais custoso
 			//O modo menos custoso é usando o Rb::getAll
 			//Ver na documentacao do Rb
 			$el->fetchAs( 'categorias' )->categoria;
+
+
 		}
 		return $lista;
 	}
@@ -37,6 +45,7 @@ class LivrosModel {
 		#caso ja exista ele retorna a id para ser usada
 		$categoria = R::findOrCreate( 'categorias', ['nome' => $data['categoriaNome']] );
 
+
 		#Defino a tabela de livros
 		$livro = Rb::tbl($this->tabela);
 		$livro->id 			= $data['id'];#defino os campos
@@ -44,7 +53,8 @@ class LivrosModel {
 		$livro->editora 	= $data['editora'];
 		$livro->categoria 	= $categoria;//insere como chave estrangeira
 		$livro->edicao 		= $data['edicao'];
-		$livro->dataLancamento = $data['dataLancamento'];#a data deve ser salva no formato americano YYYY-MM-DD
+		#converto a data para o formato americano que e aceito pelo RedBean
+		$livro->dataLancamento = dateToEUA($data['dataLancamento']);#a data deve ser salva no formato americano YYYY-MM-DD
 		return Rb::save($livro);#retorna a id
 	}
 
@@ -54,6 +64,7 @@ class LivrosModel {
 	function get($id){
 		$obj = Rb::load($this->tabela,$id);
 		$obj->fetchAs( 'categorias' )->categoria;
+		$obj->dataLancamento = dateToBr($obj->dataLancamento);
 		return $obj;
 	}
 

@@ -66,11 +66,12 @@ class Livros {
 	**/
 	function salvar(){
 		$livros = model('LivrosModel');
+
 		#mando salvar, dentro desse metodo ele ira atualizar
 		#caso ja esteja vindo com alguma id
 		$livros->save($_POST);
 		#redireciona para a pagina principal de listagem
-		redirect(serverUrl() . "/livros/");
+		redirect(serverUrl() . "livros/");
 	}
 
 	/**
@@ -82,7 +83,7 @@ class Livros {
 		#passo apenas a id para ele deletar do banco
 		#o registro com essa id desse model
 		$livros->delete($_POST['id']);
-		redirect(serverUrl() . "/livros/");
+		redirect(serverUrl() . "livros/");
 	}
 
 }

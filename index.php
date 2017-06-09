@@ -6,6 +6,7 @@
 require 'sys/config.php';
 require 'sys/rb.php';
 require 'sys/rb-mod.php';
+require 'sys/util.php';
 
 R::setup("mysql:host=$host;dbname=$dbname", $user,$pass);
 
@@ -14,7 +15,7 @@ if ($freezeDb){
 	R::freeze();
 }
 
-$server_url = "http://".$_SERVER['SERVER_NAME'] . split("index.php",$_SERVER['SCRIPT_NAME'])[0];
+$server_url = "http://".$_SERVER['SERVER_NAME'] . explode("index.php",$_SERVER['SCRIPT_NAME'])[0];
 
 /**
 *Retorna o endereco da url ate a pasta principal do projeto
