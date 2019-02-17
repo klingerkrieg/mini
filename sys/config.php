@@ -3,9 +3,11 @@
 $index = "Principal";
 
 $host = "localhost";
-$dbname = "crudteste";
+$dbname = "sedoc4";
 $user = "root";
 $pass = "";
 
 #nao realizar mais modificacoes no banco
 $freezeDb = false;
+
+$createTables = true;

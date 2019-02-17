@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Exemplo</title>
+</head>
+
+
+
+<form action="{{ url('usuarios/salvar') }}">
+
+<input type="hidden" name="usuario.id" value="{{ usuario.id }}">
+
+<label>Nome
+    <input name="usuario.nome" value="{{ usuario.nome }}">
+</label> <br/>
+
+<label>Idade
+    <input name="usuario.idade" value="{{ usuario.idade }}">
+</label> <br/>
+
+<label>Data de nascimento
+    <input name="usuario.dataNascimento" value="{{ usuario.dataNascimento }}">
+</label> <br/>
+
+<label>Altura
+    <input name="usuario.altura" value="{{ usuario.altura }}">
+</label> <br/>
+
+<label>Ativo
+    <input type="checkbox" name="usuario.ativo" value="1">
+</label> <br/>
+
+<label>Salário
+    <input name="usuario.salario" value="{{ usuario.salario }}">
+</label> <br/>
+
+<label>
+<select name="idTipo">
+    <option value="0">Admin</option>
+    <option value="1">Comum</option>
+</select>
+</label>
+<button>Salvar</button>
+
+</form>
+<br/>
+
+
+{% for usr in usuarios %}
+   
+   <a href="{{ url( 'usuarios/deletar/' ~ usr.id ) }}">Deletar</a>
+   <a href="{{ url( 'usuarios/index/' ~ usr.id ) }}">Editar</a>
+
+    {{ usr.id }} {{ usr.nome }} - {{ usr.idade }} <br/>
+{% endfor %}
+{{ usuarios.controls() }}
+
+
+</body>
+</html>
