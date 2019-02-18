@@ -10,3 +10,20 @@ body{
     font-size: 40px;
     padding:20px;
 }
+
+.table{
+    display: table;
+    width: auto;
+    clear : both;
+    table-layout : fixed;
+}
+
+.row{
+    display:table-row;
+    clear: both;
+}
+
+.col{
+    display:table-cell;
+    padding-right: 15px;
+}

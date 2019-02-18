@@ -12,6 +12,10 @@ class Usuario extends RBModel {
      * */
     public $idade;
     /**
+     * @Varchar
+     * */
+    public $sexo;
+    /**
      * @Date
      * */
     public $dataNascimento;
@@ -31,5 +35,9 @@ class Usuario extends RBModel {
      * @Money
      * */
     public $salario;
+    /**
+     * @Int
+     * */
+    public $nivel;
 }
 

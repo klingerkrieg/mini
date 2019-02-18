@@ -9,7 +9,7 @@ class Pagination implements Iterator  {
     private $count = 0;
 
     public function controls(){
-        $html = "";
+        $html = "<div class='pagination'>";
 
         if ($this->actualPage > 1){
             $html .= "<a href='?_page=1'> << </a>";
@@ -34,6 +34,8 @@ class Pagination implements Iterator  {
             $html .= "<a href='?_page=". ($this->actualPage+1) ."'> > </a>";
             $html .= "<a href='?_page=$max'> >> </a>";
         }
+
+        $html .= "</div>";
 
         print $html;
     }

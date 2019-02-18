@@ -1,0 +1,51 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+<form action="{{ url('usuarios/salvar') }}">
+
+{{ input('usuario.id', usuario, {type:'hidden'}) }}
+
+{{ input('usuario.nome', usuario, {label:"Nome"}) }} <br/>
+
+{{ input('usuario.idade', usuario, {label:"Idade"}) }} <br/>
+
+{{ input('usuario.sexo', usuario, {label:"Idade",
+                                    type:'radio',
+                                    values:{'M':"Masculino","F":"Feminino"}}) }} <br/>
+
+{{ input('usuario.dataNascimento', usuario, {label:"Data de nascimento"}) }} <br/>
+
+{{ input('usuario.altura', usuario, {label:"Altura"}) }} <br/>
+
+{{ input('usuario.ativo', usuario, {label:"Ativo",
+                                    value:1,
+                                    type:'checkbox'}) }} <br/>
+
+{{ input('usuario.salario', usuario, {label:"Salário"}) }} <br/>
+
+{{ input('usuario.nivel', usuario, {label:"Nível",
+                                    type:'select',
+                                    values:{'-':"", 0:'Admin', 1:'Comum'}}) }} <br/>
+
+
+<label>
+<select name="idTipo">
+    <option value="0">Admin</option>
+    <option value="1">Comum</option>
+</select>
+</label>
+<button>Salvar</button>
+
+</form>
+<br/>
+
+
+{{
+    list(usuarios,
+        'id,nome,idade',
+        {text:'Deletar', link:'usuarios/deletar/{id}', pos:1, final:true},
+        {text:'Editar', link:'usuarios/index/{id}', pos:0})
+ }}
+
+
+{% endblock %}

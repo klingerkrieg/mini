@@ -46,7 +46,7 @@ function _url($url){
 	$urlBack = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 	
 	if (strstr($url,".")){
-		if (!file_exists($url)){
+		if (!file_exists($url) && !file_exists(".".$url)){
 			Header("Location: ../errors/url.php?url=$url&back=$urlBack");
 		}
 	} else
@@ -136,6 +136,177 @@ $twig = new Twig_Environment($loader, [
 
 $function = new Twig_SimpleFunction('url', function ($url) {
     return _url($url);
+});
+$twig->addFunction($function);
+
+
+$function = new Twig_SimpleFunction('input', function ($name, $value, $props = []) {
+
+	if (isset($props['type'])){
+		$type = $props['type'];
+	} else {
+		$type = "text";
+	}
+
+	if (isset($props['class'])){
+		$class = $props['class'];
+	} else {
+		$class = "";
+	}
+
+	$html = "";
+
+	$lab = false;
+	if (isset($props['label'])){
+		$html .= "<label>". $props['label'];
+		$lab = true;
+	}
+
+
+	if ($value != null){
+		$vProp = substr($name,strpos($name,".")+1);
+		$val = $value->$vProp;
+	} else {
+		$val = "";
+	}
+
+
+	if ($type == "radio"){
+
+		foreach($props['values'] as $key=>$opt){
+
+
+			$checked = "";
+			if ($val === $key){
+				$checked = "checked";
+			}
+
+			$html .= "<label>";
+			$html .= "<input type='radio' $checked name='$name' value='$key' />";
+			$html .= " $opt</label>";
+		}
+
+
+	} else
+	if ($type == "select"){
+
+		$html .= "<select name='$name' >";
+
+		foreach($props['values'] as $key=>$opt){
+
+			$selected = "";
+			if ((string)$val === (string)$key){
+				$selected = "selected";
+			}
+			#sinal de - é o mesmo que vazio
+			if ($key === "-"){
+				$key = "";
+			} else {
+				$key = (int)$key;
+			}
+
+			$html .= "<option value='$key' $selected>$opt</option>";
+		}
+
+		$html .= "</select>";
+
+
+	} else
+	if ($type == "checkbox"){
+
+		if (isset($props['value'])){
+			$inputValue = $props['value'];
+		} else {
+			$inputValue = 1;
+		}
+
+		$checked = "";
+		if ($val == $inputValue){
+			$checked = "checked='checked'";
+		}
+
+		$html .= "<input type='$type' $checked name='$name' value='$inputValue' />";
+
+	} else {
+		$html .= "<input type='$type' name='$name' value='$val' />";
+	}
+
+	if ($lab){
+		$html .= "</label>";
+	}
+
+	print $html;
+
+});
+$twig->addFunction($function);
+
+
+
+function create_list_link($btn, $id){
+	#provisorio
+	$link = $btn['link'];
+	$link = str_replace("{id}","",$link);
+	$url = _url($link);
+	$link = $url . $id;
+	return "<span class='col'><a href='$link'> {$btn['text']} </a></span>";
+}
+
+
+$function = new Twig_SimpleFunction('list', function ($list, $headers = null) {
+
+	
+	//recupera os links e botoes dos parametros
+	$args = func_get_args();
+	$c = count($args);
+	$btns = [];
+	for($i = 2; $i < $c; $i++){
+		$btns[$args[$i]["pos"]] = $args[$i];
+	}
+
+	$headers = explode(",",$headers);
+
+
+	
+	$html = "<div class='table'>";
+	foreach ($list as $it){
+		$html .= "<div class='row'>";
+		#botoes anteriores
+		for ($i = 0; $i < count($btns); $i++){
+			$btn = $btns[$i];
+			if (isset($btn['final']) && $btn['final'] == true){
+				continue;
+			}
+			if (isset($btn['link'])){
+				$html .= create_list_link($btn, $it->id);
+			}
+			
+		}
+
+		#dados
+		foreach($headers as $h){
+			$html .= "<span class='col'>";
+			$html .= $it->$h;
+			$html .= "</span>";
+		}
+
+		#botoes posteriores
+		for ($i = 0; $i < count($btns); $i++){
+			$btn = $btns[$i];
+			if (isset($btn['final']) && $btn['final'] == true){
+				if (isset($btn['link'])){
+					$html .= create_list_link($btn, $it->id);
+				}
+			}
+			
+		}
+
+		$html .= "</div>";
+	}
+	$html .= "</div>";
+
+	print $html;
+	$list->controls();
+    //return $html;
 });
 $twig->addFunction($function);
 

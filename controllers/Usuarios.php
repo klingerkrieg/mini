@@ -20,7 +20,7 @@ class Usuarios {
 
 		$usuarios = new Pagination( Usuario::class );
 
-		render("index",["usuarios"=>$usuarios, "usuario"=>$usu]);
+		render("form_min",["usuarios"=>$usuarios, "usuario"=>$usu]);
 	}
 
 	function salvar(Usuario $usuario, ?int $idTipo){

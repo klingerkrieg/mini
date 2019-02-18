@@ -4,7 +4,6 @@
 class RBModel {
 
     private $_tableName;
-    //private $_rbObj = null;
     public $id = null;
     
     function __construct(){
@@ -192,25 +191,3 @@ class RBModel {
     
     
 }
-/*
-class RBModels_loader extends CI_Model {
-
-    public function __construct(){
-
-        parent::__construct();
-
-        $model_files = scandir(__DIR__);
-
-        foreach($model_files as $file){
-            $ff = explode('.', $file);
-            if(
-               strtolower($ff[0]) !== strtolower(__CLASS__) &&
-               strtolower($ff[1]) === 'php') {
-                $this->load->model(strtolower(explode('.', $file)[0]));
-                
-                if (Rb::$createTables)
-                    $ff[0]::createTable(); 
-            }
-        }
-    }
-}*/
