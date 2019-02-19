@@ -4,39 +4,40 @@ class Usuario extends RBModel {
     
     
     /**
-     * @Varchar
+     @Varchar
+     @Required
      * */
     public $nome;
     /**
-     * @Int
+     @Int
      * */
     public $idade;
     /**
-     * @Varchar
+     @Varchar
      * */
     public $sexo;
     /**
-     * @Date
+     @Date
      * */
     public $dataNascimento;
     /**
-     * @Double
+     @Double
      * */
     public $altura;
     /**
-     * @Bool
+     @Bool
      * */
     public $ativo;
     /**
-     * @Datetime
+     @Datetime
      * */
     public $ultimoAcesso;
     /**
-     * @Money
+     @Money
      * */
     public $salario;
     /**
-     * @Int
+     @Int
      * */
     public $nivel;
 }

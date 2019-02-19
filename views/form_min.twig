@@ -1,6 +1,10 @@
 {% extends "layout.twig" %}
 
 {% block content %}
+
+{{ formMessage() }}
+
+
 <form action="{{ url('usuarios/salvar') }}">
 
 {{ input('usuario.id', usuario, {type:'hidden'}) }}

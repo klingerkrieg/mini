@@ -1,4 +1,5 @@
 <?php
+session_start();
 /**
 * Framework simples MVC
 * Autor:Alan Klinger 05/06/2017
@@ -8,6 +9,9 @@ require 'sys/rb.php';
 require 'sys/RbLib.php';
 require 'sys/util.php';
 require 'sys/Pagination.php';
+require 'sys/validate.php';
+require 'sys/messages.php';
+
 
 R::setup("mysql:host=$host;dbname=$dbname", $user,$pass);
 
@@ -73,7 +77,11 @@ function _url($url){
 */
 function redirect($url){
 
-	$local = _url($url);
+	if (!strstr($url,"http")){
+		$local = _url($url);
+	} else {
+		$local = $url;
+	}
 	
 	Header("Location: $local");
 }
@@ -140,7 +148,25 @@ $function = new Twig_SimpleFunction('url', function ($url) {
 $twig->addFunction($function);
 
 
+$function = new Twig_SimpleFunction('formMessage', function () {
+	
+	if (isset($_SESSION['_flash_success'])){
+		print "<div class='flash_success'>{$_SESSION['_flash_success']}</div>";
+		unset($_SESSION['_flash_success']);
+	} else
+	if (isset($_SESSION['_flash_error'])){
+		print "<div class='flash_error'>{$_SESSION['_flash_error']}</div>";
+		unset($_SESSION['_flash_error']);
+	}
+
+});
+$twig->addFunction($function);
+
+
 $function = new Twig_SimpleFunction('input', function ($name, $value, $props = []) {
+
+	
+
 
 	if (isset($props['type'])){
 		$type = $props['type'];
@@ -171,10 +197,22 @@ $function = new Twig_SimpleFunction('input', function ($name, $value, $props = [
 	}
 
 
+	if (isset($_SESSION['_errors']) && isset($_SESSION['_errors'][$name])){
+		global $_MESSAGES;
+		$errmsg = $_SESSION['_errors'][$name]['error'];
+		$errorSpan = "<span class='error'>{$_MESSAGES[$errmsg]}</span>";
+		unset($_SESSION['_errors'][$name]);
+	}
+
+	if (isset($_SESSION['_has_errors']) && $_SESSION['_has_errors'] == true){
+		if (isset($_SESSION['_request'][str_replace(".","_",$name)]))
+			$val = $_SESSION['_request'][str_replace(".","_",$name)];
+	}
+	
+
 	if ($type == "radio"){
 
 		foreach($props['values'] as $key=>$opt){
-
 
 			$checked = "";
 			if ($val === $key){
@@ -231,9 +269,15 @@ $function = new Twig_SimpleFunction('input', function ($name, $value, $props = [
 		$html .= "<input type='$type' name='$name' value='$val' />";
 	}
 
+	
+
 	if ($lab){
 		$html .= "</label>";
 	}
+
+	if (isset($errorSpan))
+		$html .= $errorSpan;
+	
 
 	print $html;
 
@@ -355,6 +399,7 @@ $params_to_controller = array();
 $request = $_REQUEST;
 $r = new ReflectionMethod( $controller, $metodo );
 $params = $r->getParameters();
+$methodDoc = strtolower($r->getDocComment());
 if ( !empty( $params ) ) {
 	$param_names = array();
 	foreach ( $params as $param ) {
@@ -390,7 +435,45 @@ if ( !empty( $params ) ) {
 					unset($request[$key]);
 				}
 			}
+
+
+			#realiza a validacao
+			if (strstr($methodDoc,"@valid") ){
+				$errors = validate($obj,$paramName);
+
+				#recupera as mensagens caso existam
+				$methodDoc = $r->getDocComment();
+				$annotations = [];
+				$r = new ReflectionClass($class);
+				preg_match('/\@Valid(\{.*?\})/i', $methodDoc, $annotations);
+				
+				if (isset($annotations[1])){
+					$annotJson = $annotations[1];
+					$jsobj = json_decode(fixJSON($annotJson));
+				}
+				
+				
+				#redireciona de volta caso possua erros
+				$url = $_SERVER['HTTP_REFERER'];
+				if (count($errors) > 0){
+					#salva os erros
+					$_SESSION["_has_errors"] = true;
+					$_SESSION["_errors"] = $errors;
+					$_SESSION["_request"] = $_REQUEST;
+					if ($jsobj != null && isset($jsobj->error))
+						$_SESSION["_flash_error"] = $jsobj->error;
+
+					
+					redirect($url);
+					die();
+				}
+
+				$_SESSION["_has_errors"] = false;
+				if ($jsobj != null && isset($jsobj->success))
+					$_SESSION["_flash_success"] = $jsobj->success;
+			}
 		}
+
 
 		array_push($params_to_controller, $obj);
 	}

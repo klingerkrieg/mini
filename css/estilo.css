@@ -27,3 +27,21 @@ body{
     display:table-cell;
     padding-right: 15px;
 }
+
+.error{
+    color:red;
+}
+
+.flash_success{
+    color:green;
+    background-color: yellowgreen;
+    border:1px solid green;
+    padding: 10px;
+}
+
+.flash_error{
+    color:red;
+    background-color: yellow;
+    border:1px solid red;
+    padding: 10px;
+}

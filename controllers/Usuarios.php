@@ -23,6 +23,9 @@ class Usuarios {
 		render("form_min",["usuarios"=>$usuarios, "usuario"=>$usu]);
 	}
 
+	/**
+	@Valid{success:'Salvo com sucesso', error:"Erro ao salvar"}
+	 */
 	function salvar(Usuario $usuario, ?int $idTipo){
 		$usuario->save();
 		redirect("Usuarios/index/");
